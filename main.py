@@ -7,7 +7,7 @@ from aiogram.types import BotCommand
 from handlers.add_exam import register_handlers_add_exam
 from handlers.common import register_handlers_common
 from handlers.count_grade import register_handlers_count_grade
-from config import TOKEN
+from util.config import TOKEN
 
 
 async def set_commands(bot: Bot):

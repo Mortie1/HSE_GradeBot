@@ -30,7 +30,8 @@ async def cmd_help(msg: types.Message, state: FSMContext):
     await msg.answer("/help - список команд\n" +
                      "/cancel - отменить текущее действие\n" +
                      "/add_exam - добавить элемент контроля\n" +
-                     "/calculate_grade - посчитать оценку\n")
+                     "/count_grade - посчитать оценку\n" + 
+                     "/clear - удалить все элементы контроля")
 
 
 async def cmd_clear(msg: types.Message, state: FSMContext):

@@ -3,6 +3,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
+from util.custom_errors import TelebotInputError
 
 users_data = dict()
 
@@ -85,13 +86,13 @@ async def catch_exam_name(msg: types.Message, state: FSMContext):
 async def catch_exam_weight(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         try:
-            if float(msg.text) > 1.0:
-                raise ValueError
+            if float(msg.text) > 1.0 or float(msg.text) < 0:
+                raise TelebotInputError
             users_data[msg.from_user.id][data['name']].append(float(msg.text))
             await msg.answer("Введите оценку за элемент контроля")
             await state.set_state(SetExam.set_grade.state)
-        except ValueError:
-            await msg.answer("Слишком большой коэффициент, (" + str(float(msg.txt)) + " > 1.0" + ")")
+        except TelebotInputError:
+            await msg.answer("Неправильный ввод, ваш  коэффициент (" + str(float(msg.text)) + ") должен лежать в диапазоне от 0 до 1")
         except:
             await msg.answer("Неправильный ввод, попробуйте снова")
 
@@ -104,11 +105,14 @@ async def catch_exam_weight(msg: types.Message, state: FSMContext):
 async def catch_exam_grade(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         try:
-            if float(msg.text) > 10.0:
-                raise ValueError
+            if float(msg.text) > 10.0 or float(msg.text) < 0:
+                raise TelebotInputError
             users_data[msg.from_user.id][data['name']].append(float(msg.text))
             await msg.answer("Элемент контроля успешно добавлен!")
+            await state.finish()  # закончили работать с сотояниями
+        except TelebotInputError:
+            await msg.answer("Неправильный ввод, ваша оценка(" + str(float(msg.text)) + ") должна лежать в диапазоне от 0 до 10")
         except:
             await msg.answer("Неправильный ввод, попробуйте снова")
     # Finish conversation
-    await state.finish()  # закончили работать с сотояниями
+    
